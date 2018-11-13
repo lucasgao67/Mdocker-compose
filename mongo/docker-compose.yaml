@@ -1,0 +1,11 @@
+version: '3.4'
+services:
+    mongo:
+        image: mongo:4.0
+        network_mode: 'host'
+        volumes:
+            - type: volume
+              source: mongo-data
+              target: /data
+volumes:
+    mongo-data:

@@ -1,0 +1,45 @@
+version: '3.4'
+services:
+  broker1: &kafka
+    image: wurstmeister/kafka:2.11-2.0.1
+    ports:
+      - 9092:9092
+    container_name: broker1
+    environment: &env
+      KAFKA_ADVERTISED_HOST_NAME: broker1
+      KAFKA_ZOOKEEPER_CONNECT: ${ZK_HOST}
+    volumes:
+      - type: volume
+        source: kafka-data-1
+        target: /kafka
+
+  kafka-2:
+    <<: *kafka
+    ports:
+      - 9093:9092
+    container_name: broker2
+    environment:
+      <<: *env
+      KAFKA_ADVERTISED_HOST_NAME: broker2
+    volumes:
+      - type: volume
+        source: kafka-data-2
+        target: /kafka
+
+  kafka-3:
+    <<: *kafka
+    ports:
+      - 9094:9092
+    container_name: broker3
+    environment:
+      <<: *env
+      KAFKA_ADVERTISED_HOST_NAME: broker3
+    volumes:
+      - type: volume
+        source: kafka-data-3
+        target: /kafka
+
+volumes:
+  kafka-data-1:
+  kafka-data-2:
+  kafka-data-3:

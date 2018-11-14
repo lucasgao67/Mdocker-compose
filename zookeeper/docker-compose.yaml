@@ -1,30 +1,71 @@
 version: '3.4'
+
 services:
   zoo1: &zoo
-    image: zookeeper:3.5.4-beta
+    image: zookeeper:3.4.13
     restart: always
-    container_name: zoo1
+    hostname: zoo1
+    volumes:
+      - type: volume
+        source: zoo1-data
+        target: /data
+      - type: volume
+        source: zoo1-datalog
+        target: /datalog
+      - type: volume
+        source: zoo1-logs
+        target: /logs
     ports:
-      - "2181:2181"
+      - 2181:2181
     environment: &env
       ZOO_MY_ID: 1
       ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
 
   zoo2:
     <<: *zoo
+    hostname: zoo2
+    volumes:
+      - type: volume
+        source: zoo2-data
+        target: /data
+      - type: volume
+        source: zoo2-datalog
+        target: /datalog
+      - type: volume
+        source: zoo2-logs
+        target: /logs
     ports:
-      - "2182:2181"
-    container_name: zoo2    
+      - 2182:2181
     environment:
       <<: *env
       ZOO_MY_ID: 2
-  
+
   zoo3:
     <<: *zoo
+    hostname: zoo3
+    volumes:
+      - type: volume
+        source: zoo3-data
+        target: /data
+      - type: volume
+        source: zoo3-datalog
+        target: /datalog
+      - type: volume
+        source: zoo3-logs
+        target: /logs
     ports:
-      - "2183:2181"
-    container_name: zoo3    
+      - 2183:2181
     environment:
       <<: *env
       ZOO_MY_ID: 3
-  
+
+volumes:
+  zoo1-data:
+  zoo2-data:
+  zoo3-data:
+  zoo1-datalog:
+  zoo2-datalog:
+  zoo3-datalog:
+  zoo1-logs:
+  zoo2-logs:
+  zoo3-logs:

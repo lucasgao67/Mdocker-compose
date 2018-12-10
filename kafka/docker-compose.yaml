@@ -1,61 +1,22 @@
 version: '3.4'
 services:
-  nginx:
-    image: nginx:1.13.9-alpine
-    restart: always
-    ports:
-      - 2181:2181
-      - 9020:9020
-      - 9192:9192
-    volumes:
-      - type: bind
-        source: ./nginx.conf
-        target: /etc/nginx/nginx.conf
-        read_only: true
-
-  zoo1: &zoo
-    image: zookeeper:3.4.13
-    restart: always
-    depends_on:
-      - nginx
-    environment: &env
-      ZOO_MY_ID: 1
-      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
-
-  zoo2:
-    <<: *zoo
-    environment:
-      <<: *env
-      ZOO_MY_ID: 2
-
-  zoo3:
-    <<: *zoo
-    environment:
-      <<: *env
-      ZOO_MY_ID: 3
-
   broker1: &kafka
     image: wurstmeister/kafka:2.11-2.0.1
-    depends_on:
-      - zoo1
-      - zoo2
-      - zoo3
     ports:
-      - 9095:9092
+      - 9093:9092
     environment: &env_kafka
-      KAFKA_ZOOKEEPER_CONNECT: nginx:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.31.32:9095
-      KAFKA_LISTENERS: PLAINTEXT://:9092
+      KAFKA_ZOOKEEPER_CONNECT: 10.10.108.110:2182
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.10.108.110:9093
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
   broker2:
     <<: *kafka
     ports:
-      - 9093:9092
+      - 9094:9092
     environment:
       <<: *env_kafka
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.31.32:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.31.32:9094
 
   broker3:
     <<: *kafka
@@ -63,4 +24,4 @@ services:
       - 9094:9092
     environment:
       <<: *env_kafka
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.31.32:9094
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.31.32:9095

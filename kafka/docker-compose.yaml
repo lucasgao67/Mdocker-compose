@@ -2,13 +2,13 @@ version: '3.4'
 services:
   broker1: &kafka
     image: wurstmeister/kafka:2.11-2.0.1
+    restart: always
     ports:
       - 9093:9092
     environment: &env_kafka
-      KAFKA_ZOOKEEPER_CONNECT: 10.10.108.110:2182
+      KAFKA_ZOOKEEPER_CONNECT: 10.10.108.110:2182 
+      KAFKA_LISTENERS: PLAINTEXT://:9092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.10.108.110:9093
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
 
   broker2:
     <<: *kafka
@@ -16,12 +16,16 @@ services:
       - 9094:9092
     environment:
       <<: *env_kafka
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.31.32:9094
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.10.108.110:9094
 
   broker3:
     <<: *kafka
     ports:
-      - 9094:9092
+      - 9095:9092
     environment:
       <<: *env_kafka
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.31.32:9095
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.10.108.110:9095
+networks:
+   default:
+        external:
+            name: app
